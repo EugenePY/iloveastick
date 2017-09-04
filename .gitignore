@@ -1,2 +1,5 @@
 token.json
 data/*
+
+# for parse_pixnet_data
+parse_pixnet_data/2017-pixnet-hackathon-data
