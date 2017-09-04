@@ -1,5 +1,7 @@
 ## get key from here 
 ## https://developers.google.com/maps/documentation/javascript/get-api-key?hl=zh-tw
+import requests	
+
 def geocoding(address):
 
     key = '<>'
