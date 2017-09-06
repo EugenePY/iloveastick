@@ -1,5 +1,8 @@
+# 先元 a
 token.json
 data/*
+api-python-client/*
+
 
 # for parse_pixnet_data
 parse_pixnet_data/2017-pixnet-hackathon-data
