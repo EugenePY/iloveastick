@@ -54,10 +54,6 @@ def facebook_location(fb_data):
     return fb_data
 
 
-def get_location():
-    pass
-
-
 def convert_2_api_ai_representation():
     pass
 
