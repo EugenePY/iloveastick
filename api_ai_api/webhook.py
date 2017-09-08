@@ -4,7 +4,7 @@ from flask import Flask
 from flask import request
 from flask import make_response
 import json
-
+from lawrence_utils.utils import find_resturant_nearby
 
 app = Flask(__name__)
 
@@ -67,36 +67,42 @@ def webhook():
     status_code = error_handle(respone)
     print "\nGets:"
     print respone
-    reply = True
-    quick_replies = [{"content_type": "location"}]
-    text = "亞洲統神問你底都維？"
+    print respone['result']['action']
+    data = {}
+    speech = respone['result']['fulfillment']['speech']
+    act = respone['result']['action']
+    if respone['result']['action'] == "query.user_loc_fb":
+        data["facebook"] = {"text": respone['result']["fulfillment"]['speech'],
+                            "quick_replies": [{"content_type": "location"}]
+                            }
 
-    if respone['originalRequest']['source'] == "facebook":
-        print "\n Got Response from {}".format(
-            respone['originalRequest'].pop("source"))
-        fb_data = respone['originalRequest']
-        fb_data = facebook_data(text="亞洲統神問你在哪啦",
-                                quick_replies=[{"content_type": "location"}],
-                                default=fb_data['data'])
-        if fb_data['facebook'].get('postback', None):
-            text = "太神啦"
-            quick_replies = None
-        print fb_data
+    if respone['result']['action'] == "query.restaurant_near_by":
+        respone[""]
 
-    res = default_api_ai_json(speech="亞洲統神說你好",
-                              displayText="亞洲統神說你好",
+    elif act == "query.both":
+        pass
+
+    elif act == "query.loc":
+        pass
+
+    elif act == "query.type":
+        pass
+
+    elif act == "query.nearby":
+        loc_xy = respone['originalRequest']['data']['postback']
+        data['facebook'] = {"text": str(find_restaurant_nearby(**loc_xy))}
+
+    res = default_api_ai_json(speech=speech,
+                              displayText=speech,
                               status_code=status_code,
-                              data={"facebook":
-                                    {"text": text,
-                                     "quick_replies": quick_replies}})
+                              data=data)
 
     res = json.dumps(res, indent=4)
     print "\nResponse:"
     print res
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
-    if reply:
-        return r
+    return r
 
 
 if __name__ == '__main__':

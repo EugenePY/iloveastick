@@ -104,24 +104,49 @@ class Action(object):
         r = self._apply(do)
         return r
 
+class Query(Action):
+    pass
+
+class Reply(Action):
+    pass
 
 class QueryUserLoaction(Action):
     action_tag = "query.location"
 
     def __init__(self, name):
-        pass
+        self.name = name
+
+    def action(self, respone):
+        if respone['action'] == self.action_tag:
+            data = {"facebook": {"text": respone[
+                'fulfillment']['message'][0]['speech'],
+                "quick_replies"=[{"content_type": "location"}]} }
+            return data
+        else:
+            return {}
 
 
 class PostRestaurantEvent(Action):
     action_tag = "post.restaurant_event"
 
     def __init__(self, name):
+        self.name = name
+
+    def action(self, respone):
         pass
+
 
 
 class Agent(Graph):
     def __init__(self, *arg, **kwarg):
         super(Agent, self).__init__(*arg, **kwarg)
+
+    @staticmethod
+    def parse_node(cls, response):
+        current_node = Node(name=respone['message']['text'],
+             context=respone['context'],
+             intent=respone['metadata']['intentName'])
+        return current_node
 
     def action(self, response):
         return {}
