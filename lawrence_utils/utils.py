@@ -1,13 +1,15 @@
 import requests 
 from utils import *
 from math import radians,  cos, sin, asin, sqrt
-
+import pandas as pd
 ## get key from here 
 ## https://developers.google.com/maps/documentation/javascript/get-api-key?hl=zh-tw
+from lxml import html
+from collections import OrderedDict
 
 def geocoding(address):
 
-    key = '<>'
+    key = 'AIzaSyBL8p_J12csgu1HJdhyfxIkS3_xJZJF-iQ'
     url = "https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(address,key)
     res = requests.post(url).json()
     return res['results'][0]['geometry']['location']['lat'], res['results'][0]['geometry']['location']['lng']
@@ -67,7 +69,9 @@ def value_for_keypath(input_, keypath, value_type=None, *args, **kwargs):
 
     return ret 
 
-def find_resturant_nearby(keywords,lon=121.5290,lat=25.0436,per_page=50,dis_range=5,order_by='hits'):
+def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=50,
+    dis_range=5,order_by='hits',black_list=[]):
+
     keywords = '&'.join(keywords.split(" "))
 
     url = "https://emma.pixnet.cc/blog/articles/search?key={}&per_page={}&type=tag".format(keywords,per_page)
@@ -78,7 +82,6 @@ def find_resturant_nearby(keywords,lon=121.5290,lat=25.0436,per_page=50,dis_rang
         item = OrderedDict()
         item['address'] = value_for_keypath(article,'address',default=None)
         item['hits'] = value_for_keypath(article,'hits.total',default=None)
-
         item['title'] = value_for_keypath(article,'title',default=None)
         item['lon'] = value_for_keypath(article,'location.longitude',default=None)
         item['lat'] = value_for_keypath(article,'location.latitude',default=None)
@@ -90,10 +93,19 @@ def find_resturant_nearby(keywords,lon=121.5290,lat=25.0436,per_page=50,dis_rang
 
     df['distance'] = df.apply(lambda row: haversine(row['lon'], row['lat'], lon,lat), axis=1)
     df = df.query('distance<{}'.format(dis_range))
-    df = df.query('distance<{}'.format(dis_range))
-    df.sort([order_by],ascending=[False])
 
-    return df
+    df = df.query('address not in @black_list')
+
+
+    df.sort([order_by],ascending=[False])
+    df = df.reset_index(drop=True)
+
+    chosen_one = df.ix[0:5,]
+    chosen_one = add_google_info(chosen_one)
+
+    chosen_one = chosen_one.query("name!=''")
+
+    return list(chosen_one.T.to_dict().values())[0]
 
 
 def add_google_info(df):
