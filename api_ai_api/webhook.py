@@ -275,6 +275,7 @@ def webhook():
     r.headers['Content-Type'] = 'application/json'
     print p
     import os, sys
+    os.system(r'''curl -X POST -H "Content-Type: application/json; charset=utf-8" -H "Authorization: Bearer e32492590c2e4258b7bc5d2f2f7b5f64" --data "{'event':{ 'name': 'restaurant_finded', 'data': {'name': 'Sam'}}, 'timezone':'America/New_York', 'lang':'en', 'sessionId':'241ec822-b357-46a8-afb3-9a261cf55e3e'}" "https://api.api.ai/api/query?v=20150910"''')
     req = requests.post(url="https://api.api.ai/api/query?v=20150910",
                         data=p,
                   headers={"Authorization": "Bearer {}".format(APIAI_TOKEN),
