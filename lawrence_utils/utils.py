@@ -5,12 +5,15 @@ from math import radians,  cos, sin, asin, sqrt
 import pandas as pd
 ## get key from here
 ## get key from here
+## get key from here
+
+## get key from here
+
 ## https://developers.google.com/maps/documentation/javascript/get-api-key?hl=zh-tw
 from lxml import html
 from collections import OrderedDict
 
 def geocoding(address):
-
     key = 'AIzaSyBL8p_J12csgu1HJdhyfxIkS3_xJZJF-iQ'
     url = "https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(address,key)
     res = requests.post(url).json()
@@ -72,7 +75,7 @@ def value_for_keypath(input_, keypath, value_type=None, *args, **kwargs):
     return ret
 
 
-def find_resturant_nearby(keywords='食記', long=121.5290,lat=25.0436,per_page=30,
+def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=20,
     dis_range=5,order_by='hits',black_list=[]):
 
     keywords = '&'.join(keywords.split(" "))
@@ -88,6 +91,8 @@ def find_resturant_nearby(keywords='食記', long=121.5290,lat=25.0436,per_page=
         item['title'] = value_for_keypath(article,'title',default=None)
         item['long'] = value_for_keypath(article,'location.longitude',default=None)
         item['lat'] = value_for_keypath(article,'location.latitude',default=None)
+        item['link'] = value_for_keypath(article,'link',default=None)
+
         items.append(item)
 
 
@@ -109,6 +114,9 @@ def find_resturant_nearby(keywords='食記', long=121.5290,lat=25.0436,per_page=
     # chosen_one = add_google_info(chosen_one)
 
     # chosen_one = chosen_one.query("n!=''")
+    #chosen_one = add_google_info(chosen_one)
+
+    #chosen_one = chosen_one.query("name!=''")
 
     temp = list(chosen_one.T.to_dict().values())[0]
     temp['url'] = url
@@ -158,4 +166,4 @@ def add_google_info(df):
     return df
 
 if __name__ == "__main__":
-    find_resturant_nearby()
+    pass

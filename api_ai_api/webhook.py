@@ -80,13 +80,19 @@ def webhook():
         respone[""]
 
     elif act == "query.both":
-        pass
+        type_response = respone['']
+        loc = respone['']
 
     elif act == "query.loc":
         pass
 
     elif act == "query.type":
-        pass
+        type_response = respone['result']['parameters']
+        if type_response['type'] is not None:
+            type_ = type_response['type']
+        elif type_response['anytype'] is not None:
+            speech = 'OIJFOIJF'
+
 
     elif act == "query.nearby":
         loc_xy = respone['originalRequest']['data']['postback']['data']

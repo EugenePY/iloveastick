@@ -1,15 +1,11 @@
-## get key from here
-## https://developers.google.com/maps/documentation/javascript/get-api-key?hl=zh-tw
 import requests
 from utils import *
 
 def geocoding(address):
-
     key = '<>'
     url = "https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(address,key)
     res = requests.post(url).json()
     return res['results'][0]['geometry']['location']['lat'], res['results'][0]['geometry']['location']['lng']
-
 
 ## to cal. distance
 def haversine(lon1, lat1, lon2, lat2):
@@ -30,8 +26,7 @@ def haversine(lon1, lat1, lon2, lat2):
 
 ## get key here :
 ## https://developers.google.com/places/web-service/get-api-key?hl=zh-tw
-
-def get_restaurant_nearby(lat='25.035135',lon='121.54388',keywords):
+def get_restaurant_nearby(keywords, lat='25.035135',lon='121.54388'):
     lat = '25.035135'
     lon = '121.54388'
     radius = 499
