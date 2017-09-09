@@ -7,5 +7,8 @@ def cleanhtml(raw_html):
     cleantext = re.sub(cleanr, '', raw_html)
     return cleantext
 
+def get_res_by_res_name(name, res_type):
+    pass
+
 
 

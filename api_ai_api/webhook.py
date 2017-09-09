@@ -89,8 +89,19 @@ def webhook():
         pass
 
     elif act == "query.nearby":
-        loc_xy = respone['originalRequest']['data']['postback']
-        data['facebook'] = {"text": str(find_restaurant_nearby(**loc_xy))}
+        loc_xy = respone['originalRequest']['data']['postback']['data']
+        restatuarant_spec = find_resturant_nearby(**loc_xy)
+        data['facebook'] = {"attachment":{ "type": "template",
+                                          "payload":
+                                          {"template_type": "open_graph",
+                                           "elements":[
+                                               {"url": restatuarant_spec['url'],
+                                                "buttons":[{"type":"web_url",
+                                                            "url": restatuarant_spec['url'],
+                                                            "title":restatuarant_spec['title']}]}]
+                                           }
+                                          }
+                            }
 
     res = default_api_ai_json(speech=speech,
                               displayText=speech,
