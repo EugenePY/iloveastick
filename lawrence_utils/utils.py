@@ -74,9 +74,35 @@ def value_for_keypath(input_, keypath, value_type=None, *args, **kwargs):
 
     return ret
 
+def find_resturant_by_type(keywords, counter=0, per_page=100):
+    keywords = '&'.join(keywords.split(" "))
 
-def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=20,
-    dis_range=5,order_by='hits',black_list=[]):
+    url = "https://emma.pixnet.cc/blog/articles/search?key={}&per_page={}&type=tag".format(keywords,per_page)
+    response = requests.get(url).json()
+
+    items=[]
+    for article in response['articles']:
+        item = OrderedDict()
+        item['address'] = value_for_keypath(article,'address',default=None)
+        item['hits'] = value_for_keypath(article,'hits.total',default=None)
+        item['title'] = value_for_keypath(article,'title',default=None)
+        item['lon'] = value_for_keypath(article,'location.longitude',default=None)
+        item['lat'] = value_for_keypath(article,'location.latitude',default=None)
+        item['link'] = value_for_keypath(article,'link',default=None)
+
+        items.append(item)
+
+
+    df = pd.DataFrame(items)
+    df = df.dropna(subset=df.columns)
+    temp = list(df.T.to_dict().values())[counter]
+
+    return temp
+
+
+def find_resturant_nearby(counter=0, keywords='食記', lon=121.5290, lat=25.0436,
+                          per_page=20, dis_range=5,order_by='hits',
+                          black_list=[]):
 
     keywords = '&'.join(keywords.split(" "))
 
@@ -89,7 +115,7 @@ def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=20
         item['address'] = value_for_keypath(article,'address',default=None)
         item['hits'] = value_for_keypath(article,'hits.total',default=None)
         item['title'] = value_for_keypath(article,'title',default=None)
-        item['long'] = value_for_keypath(article,'location.longitude',default=None)
+        item['lon'] = value_for_keypath(article,'location.longitude',default=None)
         item['lat'] = value_for_keypath(article,'location.latitude',default=None)
         item['link'] = value_for_keypath(article,'link',default=None)
 
@@ -99,9 +125,9 @@ def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=20
     df = pd.DataFrame(items)
     df = df.dropna(subset=df.columns)
 
-    df['distance'] = df.apply(lambda row: haversine(row['long'],
+    df['distance'] = df.apply(lambda row: haversine(row['lon'],
                                                     row['lat'],
-                                                    long,lat), axis=1)
+                                                    lon,lat), axis=1)
     df = df.query('distance<{}'.format(dis_range))
 
     df = df.query('address not in @black_list')
@@ -117,9 +143,7 @@ def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=20
     #chosen_one = add_google_info(chosen_one)
 
     #chosen_one = chosen_one.query("name!=''")
-
-    temp = list(chosen_one.T.to_dict().values())[0]
-    temp['url'] = url
+    temp = list(chosen_one.T.to_dict().values())[counter]
     return temp
 
 

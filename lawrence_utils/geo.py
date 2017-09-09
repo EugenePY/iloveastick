@@ -1,6 +1,7 @@
 import requests
 from utils import *
 
+
 def geocoding(address):
     key = '<>'
     url = "https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}".format(address,key)
@@ -45,7 +46,8 @@ def get_restaurant_nearby(keywords, lat='25.035135',lon='121.54388'):
         print(i)
         print(next_page_token)
         if next_page_token:
-            url_tmp = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken={}&key={}".format(next_page_token,key)
+            url_tmp = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken={}&key={}".format(
+                next_page_token, key)
             res_tmp = requests.get(url).json()
             results_tmp = res_tmp['results']
             results.extend(results_tmp)
