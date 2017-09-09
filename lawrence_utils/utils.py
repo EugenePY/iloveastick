@@ -69,7 +69,7 @@ def value_for_keypath(input_, keypath, value_type=None, *args, **kwargs):
 
     return ret 
 
-def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=50,
+def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=20,
     dis_range=5,order_by='hits',black_list=[]):
 
     keywords = '&'.join(keywords.split(" "))
@@ -85,6 +85,8 @@ def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=50
         item['title'] = value_for_keypath(article,'title',default=None)
         item['lon'] = value_for_keypath(article,'location.longitude',default=None)
         item['lat'] = value_for_keypath(article,'location.latitude',default=None)
+        item['link'] = value_for_keypath(article,'link',default=None)
+
         items.append(item)
 
 
@@ -101,9 +103,9 @@ def find_resturant_nearby(keywords='食記',lon=121.5290,lat=25.0436,per_page=50
     df = df.reset_index(drop=True)
 
     chosen_one = df.ix[0:5,]
-    chosen_one = add_google_info(chosen_one)
+    #chosen_one = add_google_info(chosen_one)
 
-    chosen_one = chosen_one.query("name!=''")
+    #chosen_one = chosen_one.query("name!=''")
 
     return list(chosen_one.T.to_dict().values())[0]
 
